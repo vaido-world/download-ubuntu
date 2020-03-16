@@ -119,5 +119,5 @@ for /f delims^=^"^ tokens^=4 %%i in ('curl -s https://api.github.com/repos/pbata
 curl --location "%%i" > "%%~nxi"
 set "rufus_filename=%%~nxi"
 )
-
-%rufus_filename% --iso="!ubuntu_desktop_filename!"
+ren "%rufus_filename%" "rufus.exe"
+rufus.exe --iso="!ubuntu_desktop_filename!"
