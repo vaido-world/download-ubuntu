@@ -1,0 +1,122 @@
+@echo off
+:: BatchGotAdmin
+:-------------------------------------
+REM  --> Check for permissions
+>nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
+
+REM --> If error flag set, we do not have admin.
+if '%errorlevel%' NEQ '0' (
+    echo Requesting administrative privileges...
+    goto UACPrompt
+) else ( goto gotAdmin )
+
+:UACPrompt
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+
+    "%temp%\getadmin.vbs"
+    exit /B
+
+:gotAdmin
+    if exist "%temp%\getadmin.vbs" ( del "%temp%\getadmin.vbs" )
+    pushd "%CD%"
+    CD /D "%~dp0"
+:-------------------------------------- 
+
+@ECHO OFF
+chcp 65001 > nul
+echo. 
+echo   ██╗   ██╗ █████╗ ██╗██████╗  ██████╗     ██████╗  █████╗ ███████╗ █████╗ ██╗   ██╗██╗     ██╗███████╗
+echo   ██║   ██║██╔══██╗██║██╔══██╗██╔═══██╗    ██╔══██╗██╔══██╗██╔════╝██╔══██╗██║   ██║██║     ██║██╔════╝
+echo   ██║   ██║███████║██║██║  ██║██║   ██║    ██████╔╝███████║███████╗███████║██║   ██║██║     ██║███████╗
+echo   ╚██╗ ██╔╝██╔══██║██║██║  ██║██║   ██║    ██╔═══╝ ██╔══██║╚════██║██╔══██║██║   ██║██║     ██║╚════██║
+echo    ╚████╔╝ ██║  ██║██║██████╔╝╚██████╔╝    ██║     ██║  ██║███████║██║  ██║╚██████╔╝███████╗██║███████║
+echo     ╚═══╝  ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝     ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝╚══════╝
+echo                                      Sveiki atvykę į Vaido World. (Alpha versija)
+echo.
+echo       Naudojantis šia programa galima parsisiųsti ir įsirašyti Ubuntu/Linux instaliacijos failus
+echo                                  į savo turimą išorinę laikmeną.
+echo.
+echo   Įsirašius instaliacijos failus į išorinę laikmeną - bus galima įsirašyti ir pačią Ubuntu/Linux operacinę sistemą.
+echo. 
+
+@ECHO OFF
+SETLOCAL EnableDelayedExpansion
+
+REM Get current Year and Month for Windows 10 Windows 8.1 Windows 8 Windows 7
+FOR /F "skip=1 tokens=1-6" %%A IN ('WMIC.exe Path Win32_LocalTime Get Day^,Hour^,Minute^,Month^,Second^,Year /Format:table') DO (
+    SET "year_now=!year_now!%%F"
+    SET "month_now=!month_now!%%D"
+
+ )
+SET "year_now=%year_now:~2,2%"
+
+
+SET "releaseCycle=Interim";
+IF "%releaseCycle%"=="LTS" (
+	SET /A "year=!year_now! - 2"
+	SET "release_version=!year!.04"
+) ELSE IF "%releaseCycle%"=="Interim" (
+	IF %month_now% LSS 4 (
+		SET /A "year=!year_now! - 1"
+		SET "release_version=!year!.10"
+	)
+	IF %month_now% LSS 10 (
+		IF %month_now% GEQ 04 (
+			SET "release_version=!year_now!.04"
+			echo !release_version!;
+		)
+	)
+	IF %month_now% GEQ  10 (
+		SET "release_version=!year_now!.10"
+	)
+) ELSE IF "%releaseCycle%"=="Daily" (
+	IF %month_now% LSS 4 (
+		SET "release_version=!year_now!.04"
+	)
+	IF %month_now% LSS 10 (
+		IF %month_now% GEQ 04 (
+			SET "release_version=!year_now!.10"
+		)
+	)
+	IF %month_now% GEQ 10 (
+		SET "release_version=!year_now!.10"
+	)
+) ELSE (
+	echo "Available Ubuntu release cycles: LTS Interim Daily"
+	echo "Please select one of them by assinging one of them to the variable \$releaseCycle"
+)
+
+IF "%releaseCycle%"=="LTS" (
+	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s http://releases.ubuntu.com/%release_version%/MD5SUMS') DO (
+		echo %%A | findstr /i /c:"desktop" >nul && SET "ubuntu_desktop_filename=%%A"
+	)
+
+	curl "http://releases.ubuntu.com/%release_version%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+)
+
+IF "%releaseCycle%"=="Interim" (
+	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s http://releases.ubuntu.com/%release_version%/MD5SUMS') DO (
+		echo %%A | findstr /i /c:"desktop" >nul && SET "ubuntu_desktop_filename=%%A"
+	)
+	curl "http://releases.ubuntu.com/%release_version%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+)
+
+IF "%releaseCycle%"=="Daily" (
+	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s wget http://cdimage.ubuntu.com/daily-live/pending/MD5SUMS') DO (
+		echo %%A | findstr /i /c:"desktop" >nul && SET "ubuntu_desktop_filename=%%A"
+	)
+
+	curl "http://cdimage.ubuntu.com/daily-live/pending/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+)
+
+
+for /f delims^=^"^ tokens^=4 %%i in ('curl -s https://api.github.com/repos/pbatard/rufus/releases/latest ^| findstr ^"browser_download_url.*exe^" ^| findstr -v ^"arm^" ^| findstr -v ^"p.exe^" ^| findstr -v ^".sig^"
+') do (
+curl --location "%%i" > "%%~nxi"
+set "rufus_filename=%%~nxi"
+)
+
+%rufus_filename% --iso="!ubuntu_desktop_filename!"
+
+pause
