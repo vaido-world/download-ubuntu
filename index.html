@@ -111,48 +111,60 @@ FOR /F "tokens=2 delims=^*" %%A IN ('curl -s %URL%/MD5SUMS') DO (
 	echo %%A | findstr /i /c:"desktop-amd64" >nul && SET "ubuntu_desktop_filename=%%A"
 )
 
-ECHO Checking MD5 integrity of already existing file
-
-SETLOCAL ENABLEDELAYEDEXPANSION
-set /a count=1 
-for /f "skip=1 delims=:" %%a in ('CertUtil -hashfile "!ubuntu_desktop_filename!" MD5') do (
-  if !count! equ 1 set "md5=%%a"
-  set/a count+=1
-)
-endlocal && SET md5file=%md5%
-echo File:   %md5file%
 
 
-ECHO Downloading MD5 integrity from Online Site
+IF EXIST !ubuntu_desktop_filename! (
+	ECHO Checking MD5 integrity of already existing file
 
-SETLOCAL ENABLEDELAYEDEXPANSION
-FOR /F "tokens=1 delims=^*" %%A IN ('curl -s wget %URL%/MD5SUMS ^| findstr /i /c^:^"desktop^"') DO (
-	set "md5online=%%A"
-	set "md5online=!md5online:~%~1,-1%!"
+	SETLOCAL ENABLEDELAYEDEXPANSION
+	set /a count=1 
+	for /f "skip=1 delims=:" %%a in ('CertUtil -hashfile "!ubuntu_desktop_filename!" MD5') do (
+	  if !count! equ 1 set "md5=%%a"
+	  set/a count+=1
+	)
+	SET md5file=!md5!
+	echo File:  !md5file! 
 
 
-)
-echo Online: %md5online%
+	ECHO Downloading MD5 integrity from Online Site
 
-if "%md5online%" == "%md5file%" (
-	echo No need to download, the MD5 matched - local image file will be used for Rufus
+	SETLOCAL ENABLEDELAYEDEXPANSION
+	FOR /F "tokens=1 delims=^*" %%A IN ('curl -s wget %URL%/MD5SUMS ^| findstr /i /c^:^"desktop^"') DO (
+		set "md5online=%%A"
+		set "md5online=!md5online:~%~1,-1%!"
+
+
+	)
+	echo Online: !md5online!
+
+	if "!md5online!" == "!md5file!" (
+		echo No need to download, the MD5 matched - local image file will be used for Rufus
+
+	) ELSE (
+		echo Ubuntu Image didn't match with Online MD5, downloading new one
+		curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+	)
+
 
 ) ELSE (
 
 curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+
 )
 
-
-	
 
 
 
 
 for /f delims^=^"^ tokens^=4 %%i in ('curl -s https://api.github.com/repos/pbatard/rufus/releases/latest ^| findstr ^"browser_download_url.*exe^" ^| findstr -v ^"arm^" ^| findstr -v ^"p.exe^" ^| findstr -v ^".sig^"
 ') do (
-del "%rufus_filename%" >NUL
+IF EXIST "%rufus_filename%" del "%rufus_filename%" >NUL
 curl --location "%%i" > "%%~nxi"
 set "rufus_filename=%%~nxi"
 )
-ren "%rufus_filename%" "rufus.exe"
+ren "%rufus_filename%" "rufus.exe"rufus.com
+
 rufus.exe --iso="!ubuntu_desktop_filename!"
+
+
+
