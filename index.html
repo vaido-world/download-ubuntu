@@ -56,7 +56,7 @@ SET "year_now=%year_now:~2,2%"
 
 
 SET "releaseCycle=Interim";
-IF "%releaseCycle%"=="LTS" (
+IF "%releaseCycle%" == "LTS" (
 	SET /A "year=!year_now! - 2"
 	SET "release_version=!year!.04"
 ) ELSE IF "%releaseCycle%"=="Interim" (
@@ -67,7 +67,6 @@ IF "%releaseCycle%"=="LTS" (
 	IF %month_now% LSS 10 (
 		IF %month_now% GEQ 04 (
 			SET "release_version=!year_now!.04"
-			echo !release_version!;
 		)
 	)
 	IF %month_now% GEQ  10 (
@@ -88,34 +87,68 @@ IF "%releaseCycle%"=="LTS" (
 ) ELSE (
 	echo "Available Ubuntu release cycles: LTS Interim Daily"
 	echo "Please select one of them by assinging one of them to the variable \$releaseCycle"
+	PAUSE
+	EXIT
 )
 
-IF "%releaseCycle%"=="LTS" (
-	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s http://releases.ubuntu.com/%release_version%/MD5SUMS') DO (
-		echo %%A | findstr /i /c:"desktop" >nul && SET "ubuntu_desktop_filename=%%A"
-	)
 
-	curl "http://releases.ubuntu.com/%release_version%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+IF "%releaseCycle%"=="LTS" (
+	SET "URL=http://releases.ubuntu.com/%release_version%"
 )
 
 IF "%releaseCycle%"=="Interim" (
-	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s http://releases.ubuntu.com/%release_version%/MD5SUMS') DO (
-		echo %%A | findstr /i /c:"desktop" >nul && SET "ubuntu_desktop_filename=%%A"
-	)
-	curl "http://releases.ubuntu.com/%release_version%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+	SET "URL=http://releases.ubuntu.com/%release_version%"
 )
 
 IF "%releaseCycle%"=="Daily" (
-	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s wget http://cdimage.ubuntu.com/daily-live/pending/MD5SUMS') DO (
-		echo %%A | findstr /i /c:"desktop" >nul && SET "ubuntu_desktop_filename=%%A"
+	SET "URL=http://cdimage.ubuntu.com/daily-live/pending"
+)
+
+
+	SETLOCAL ENABLEDELAYEDEXPANSION
+
+	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s %URL%/MD5SUMS') DO (
+		echo %%A | findstr /i /c:"desktop-amd64" >nul && SET "ubuntu_desktop_filename=%%A"
 	)
 
-	curl "http://cdimage.ubuntu.com/daily-live/pending/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+
+SETLOCAL ENABLEDELAYEDEXPANSION
+set /a count=1 
+for /f "skip=1 delims=:" %%a in ('CertUtil -hashfile "!ubuntu_desktop_filename!" MD5') do (
+  if !count! equ 1 set "md5=%%a"
+  set/a count+=1
 )
+endlocal && SET md5file=%md5%
+echo File:   %md5file%
+
+
+
+SETLOCAL ENABLEDELAYEDEXPANSION
+FOR /F "tokens=1 delims=^*" %%A IN ('curl -s wget %URL%/MD5SUMS ^| findstr /i /c^:^"desktop^"') DO (
+	set "md5online=%%A"
+	set "md5online=!md5online:~%~1,-1%!"
+
+
+	)
+echo Online: %md5online%
+
+if "%md5online%" == "%md5file%" (
+	echo yes
+
+) ELSE (
+
+curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+)
+
+
+	
+
+
 
 
 for /f delims^=^"^ tokens^=4 %%i in ('curl -s https://api.github.com/repos/pbatard/rufus/releases/latest ^| findstr ^"browser_download_url.*exe^" ^| findstr -v ^"arm^" ^| findstr -v ^"p.exe^" ^| findstr -v ^".sig^"
 ') do (
+del "%rufus_filename%" >NUL
 curl --location "%%i" > "%%~nxi"
 set "rufus_filename=%%~nxi"
 )
