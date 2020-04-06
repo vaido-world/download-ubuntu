@@ -105,12 +105,13 @@ IF "%releaseCycle%"=="Daily" (
 )
 
 
-	SETLOCAL ENABLEDELAYEDEXPANSION
+SETLOCAL ENABLEDELAYEDEXPANSION
 
-	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s %URL%/MD5SUMS') DO (
-		echo %%A | findstr /i /c:"desktop-amd64" >nul && SET "ubuntu_desktop_filename=%%A"
-	)
+FOR /F "tokens=2 delims=^*" %%A IN ('curl -s %URL%/MD5SUMS') DO (
+	echo %%A | findstr /i /c:"desktop-amd64" >nul && SET "ubuntu_desktop_filename=%%A"
+)
 
+ECHO Checking MD5 integrity of already existing file
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 set /a count=1 
@@ -122,6 +123,7 @@ endlocal && SET md5file=%md5%
 echo File:   %md5file%
 
 
+ECHO Downloading MD5 integrity from Online Site
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 FOR /F "tokens=1 delims=^*" %%A IN ('curl -s wget %URL%/MD5SUMS ^| findstr /i /c^:^"desktop^"') DO (
@@ -129,11 +131,11 @@ FOR /F "tokens=1 delims=^*" %%A IN ('curl -s wget %URL%/MD5SUMS ^| findstr /i /c
 	set "md5online=!md5online:~%~1,-1%!"
 
 
-	)
+)
 echo Online: %md5online%
 
 if "%md5online%" == "%md5file%" (
-	echo yes
+	echo No need to download, the MD5 matched - local image file will be used for Rufus
 
 ) ELSE (
 
