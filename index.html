@@ -158,11 +158,11 @@ curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
 
 for /f delims^=^"^ tokens^=4 %%i in ('curl -s https://api.github.com/repos/pbatard/rufus/releases/latest ^| findstr ^"browser_download_url.*exe^" ^| findstr -v ^"arm^" ^| findstr -v ^"p.exe^" ^| findstr -v ^".sig^"
 ') do (
-IF EXIST "%rufus_filename%" del "%rufus_filename%" >NUL
-curl --location "%%i" > "%%~nxi"
-set "rufus_filename=%%~nxi"
+	curl --location "%%i" > "%%~nxi"
+	set "rufus_filename=%%~nxi"
 )
-ren "%rufus_filename%" "rufus.exe"rufus.com
+IF EXIST "rufus.exe" del "rufus.exe"
+ren "%rufus_filename%" "rufus.exe"
 
 rufus.exe --iso="!ubuntu_desktop_filename!"
 
