@@ -1,8 +1,5 @@
 @ECHO OFF
 CLS
-	echo %1 %0 
-	echo %* here suppose 1
-
 :: BatchGotAdmin
 :-------------------------------------
 REM  --> Check for permissions
@@ -19,8 +16,6 @@ if '%errorlevel%' NEQ '0' (
     echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
 
     "%temp%\getadmin.vbs"
-	echo %1 %0 
-	echo %* here suppose 2
     taskkill /fi "WINDOWTITLE eq %1*"
     exit /B
 
@@ -31,7 +26,7 @@ if '%errorlevel%' NEQ '0' (
 :-------------------------------------- 
 
 @ECHO OFF
-cls
+CLS
 TITLE Vaido Pasaulis
 chcp 65001 > nul
 echo. 
