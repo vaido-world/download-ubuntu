@@ -155,15 +155,19 @@ curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
 
 
 
-
+ECHO Downloading and parsing Data from GitHub API about Rufus Project
 for /f delims^=^"^ tokens^=4 %%i in ('curl -s https://api.github.com/repos/pbatard/rufus/releases/latest ^| findstr ^"browser_download_url.*exe^" ^| findstr -v ^"arm^" ^| findstr -v ^"p.exe^" ^| findstr -v ^".sig^"
 ') do (
+	ECHO Downloading Latest Rufus binary release from GitHub
 	curl --location "%%i" > "%%~nxi"
 	set "rufus_filename=%%~nxi"
 )
+ECHO Renaming Rufus binary name to a name without version
+ECHO (as that make stops Rufus from checking for latest version according to the Rufus developer)
 IF EXIST "rufus.exe" del "rufus.exe"
 ren "%rufus_filename%" "rufus.exe"
 
+ECHO Launching Rufus and autoselecting downloaded .iso file
 rufus.exe --iso="!ubuntu_desktop_filename!"
 
 
