@@ -147,8 +147,8 @@ IF EXIST !ubuntu_desktop_filename! (
 
 
 ) ELSE (
-
-curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+	ECHO Downloading Ubuntu .iso file
+	curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
 
 )
 
