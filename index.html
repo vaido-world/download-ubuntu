@@ -20,16 +20,16 @@ if '%errorlevel%' NEQ '0' (
     echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
 
     "%temp%\getadmin.vbs"
+	echo %1 %0 
+	echo %* here suppose 2
+	pause
+    taskkill /fi "WINDOWTITLE eq %1*"
     exit /B
 
 :gotAdmin
     if exist "%temp%\getadmin.vbs" ( del "%temp%\getadmin.vbs" )
     pushd "%CD%"
     CD /D "%~dp0"
-	echo %1 %0 
-	echo %* here suppose 2
-	pause
-    taskkill /fi "WINDOWTITLE eq %1*"
 :-------------------------------------- 
 
 @ECHO OFF
