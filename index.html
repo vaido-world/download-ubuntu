@@ -109,8 +109,9 @@ IF "%releaseCycle%"=="Daily" (
 )
 
 
+ECHO Downloading and Parsing data from Ubuntu.com
+ECHO    Gathering .iso Filename from remote source
 SETLOCAL ENABLEDELAYEDEXPANSION
-
 FOR /F "tokens=2 delims=^*" %%A IN ('curl -s %URL%/MD5SUMS') DO (
 	echo %%A | findstr /i /c:"desktop-amd64" >nul && SET "ubuntu_desktop_filename=%%A"
 )
