@@ -46,6 +46,7 @@ echo.
 @ECHO OFF
 SETLOCAL EnableDelayedExpansion
 
+ECHO Gathering local Date information
 REM Get current Year and Month for Windows 10 Windows 8.1 Windows 8 Windows 7
 FOR /F "skip=1 tokens=1-6" %%A IN ('WMIC.exe Path Win32_LocalTime Get Day^,Hour^,Minute^,Month^,Second^,Year /Format:table') DO (
     SET "year_now=!year_now!%%F"
@@ -54,7 +55,7 @@ FOR /F "skip=1 tokens=1-6" %%A IN ('WMIC.exe Path Win32_LocalTime Get Day^,Hour^
  )
 SET "year_now=%year_now:~2,2%"
 
-
+ECHO Guessing Ubuntu release cycle...
 SET "releaseCycle=Interim";
 IF "%releaseCycle%" == "LTS" (
 	SET /A "year=!year_now! - 2"
