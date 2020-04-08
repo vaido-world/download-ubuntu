@@ -1,5 +1,9 @@
 @echo off
 cls
+	echo %1 %0 
+	echo %* here suppose 1
+	pause
+
 :: BatchGotAdmin
 :-------------------------------------
 REM  --> Check for permissions
@@ -23,7 +27,7 @@ if '%errorlevel%' NEQ '0' (
     pushd "%CD%"
     CD /D "%~dp0"
 	echo %1 %0 
-	echo %* here suppose
+	echo %* here suppose 2
 	pause
     taskkill /fi "WINDOWTITLE eq %1*"
 :-------------------------------------- 
