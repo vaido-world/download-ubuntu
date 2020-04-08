@@ -22,7 +22,7 @@ if '%errorlevel%' NEQ '0' (
     if exist "%temp%\getadmin.vbs" ( del "%temp%\getadmin.vbs" )
     pushd "%CD%"
     CD /D "%~dp0"
-	echo %1 here suppose
+	echo %1 %0 here suppose
 	pause
     taskkill /fi "WINDOWTITLE eq %1*"
 :-------------------------------------- 
