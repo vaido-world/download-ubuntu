@@ -149,6 +149,7 @@ IF EXIST !ubuntu_desktop_filename! (
 	) ELSE (
 		echo Ubuntu Image didn't match with Online MD5, downloading new one
 		ECHO   Filename: !ubuntu_desktop_filename!
+		del "!ubuntu_desktop_filename!"
 		curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
 	)
 
@@ -156,6 +157,7 @@ IF EXIST !ubuntu_desktop_filename! (
 ) ELSE (
 	ECHO Downloading Linux/GNU/Ubuntu .iso installation disk file
 	ECHO   Filename: !ubuntu_desktop_filename!
+	del "!ubuntu_desktop_filename!"
 	curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
 
 )
