@@ -11,13 +11,13 @@ IF EXIST "%TEMP%\typed" (
 	FOR /F %%A in ("%TEMP%\typed") DO SET "converted_size=%%~zA"
 	IF "!converted_size!" == "!current_script_size!" (
 		ECHO are equal !converted_size! eq !current_script_size!
-		PAUSE
+		
 	) ELSE (
 		ECHO Are not equal  !converted_size! eq !current_script_size!
 	)
 )
 
-pause
+
 
 CLS
 :: BatchGotAdmin
