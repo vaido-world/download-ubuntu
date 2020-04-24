@@ -1,7 +1,7 @@
 @ECHO OFF
 
 IF NOT "%~DP0%~n0%~x0" == "%~DP0%~n0%~x0_ready_for_execution" (
-	TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%~DP0%~n0%~x0_ready_for_execution"
+	TYPE "%~DP0%~n0%~x0" | FIND "" /V > "ready_for_execution_%~DP0%~n0%~x0"
 	CALL ready_for_execution_%~DP0%~n0%~x0
 )
 
