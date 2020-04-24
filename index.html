@@ -1,8 +1,8 @@
 @ECHO OFF
 
 IF NOT "%~DP0%~n0%~x0" == "%~DP0%~n0%~x0_ready_for_execution" (
-	TYPE "%~DP0%~n0%~x0" | FIND "" /V > "ready_for_execution_%~DP0%~n0%~x0"
-	CALL ready_for_execution_%~DP0%~n0%~x0
+	TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%~DP0ready_for_execution_%~n0%~x0"
+	CALL %~DP0ready_for_execution_%~n0%~x0
 )
 
 SETLOCAL EnableDelayedExpansion
