@@ -1,8 +1,8 @@
 @ECHO OFF
 
-
-TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%~DP0%~n0%~x0"
-
+IF NOT EXIST "%~DP0%~n0%~x0_ready_for_execution" (
+TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%~DP0%~n0%~x0_ready_for_execution"
+)
 SETLOCAL EnableDelayedExpansion
 IF EXIST "%TEMP%\typed" (
 	FOR /F %%A in ("%~DP0%~n0%~x0") DO SET "current_script_size=%%~zA"
