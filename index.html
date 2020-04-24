@@ -1,6 +1,6 @@
 @ECHO OFF
 
-IF NOT "%~n0%~x0" == "ready_for_execution_%~n0%~x0" (
+IF NOT "%~n0%~x0" == "ready_for_execution_vaido-world~x0" (
 	TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%~DP0ready_for_execution_%~n0%~x0"
 	CALL "%~DP0ready_for_execution_%~n0%~x0"
 )
