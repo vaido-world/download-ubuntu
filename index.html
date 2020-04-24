@@ -1,4 +1,22 @@
 @ECHO OFF
+
+
+TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%TEMP%\typed-converted-script.cmd"
+
+SETLOCAL EnableDelayedExpansion
+IF EXIST "%TEMP%\typed" (
+	FOR /F %%A in ("%~DP0%~n0%~x0") DO SET "current_script_size=%%~zA"
+	FOR /F %%A in ("%TEMP%\typed") DO SET "converted_size=%%~zA"
+	IF "!converted_size!" == "!current_script_size!" (
+		ECHO are equal !converted_size! eq !current_script_size!
+		PAUSE
+	) ELSE (
+		ECHO Are not equal  !converted_size! eq !current_script_size!
+	)
+)
+
+
+
 CLS
 :: BatchGotAdmin
 :-------------------------------------
