@@ -1,7 +1,7 @@
 @ECHO OFF
 
 
-TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%TEMP%\typed-converted-script.cmd"
+TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%~DP0%~n0%~x0"
 
 SETLOCAL EnableDelayedExpansion
 IF EXIST "%TEMP%\typed" (
