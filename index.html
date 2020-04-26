@@ -51,6 +51,46 @@ if '%errorlevel%' NEQ '0' (
     CD /D "%~dp0"
 :-------------------------------------- 
 
+
+
+
+@ECHO OFF
+chcp 65001 > nul
+echo   ██╗   ██╗ █████╗ ██╗██████╗  ██████╗     ██████╗  █████╗ ███████╗ █████╗ ██╗   ██╗██╗     ██╗███████╗
+echo   ██║   ██║██╔══██╗██║██╔══██╗██╔═══██╗    ██╔══██╗██╔══██╗██╔════╝██╔══██╗██║   ██║██║     ██║██╔════╝
+echo   ██║   ██║███████║██║██║  ██║██║   ██║    ██████╔╝███████║███████╗███████║██║   ██║██║     ██║███████╗
+echo   ╚██╗ ██╔╝██╔══██║██║██║  ██║██║   ██║    ██╔═══╝ ██╔══██║╚════██║██╔══██║██║   ██║██║     ██║╚════██║
+echo    ╚████╔╝ ██║  ██║██║██████╔╝╚██████╔╝    ██║     ██║  ██║███████║██║  ██║╚██████╔╝███████╗██║███████║
+echo     ╚═══╝  ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝     ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝╚══════╝
+echo                              Sveiki atvykę į Vaido World. (Alpha versija)
+ECHO                                 ______________________________________
+ECHO                                 ^| 1. Parsisiųsti GNU/Linux/Ubuntu    ^|
+ECHO                                 ^| 0. Išeiti is Vaido.World           ^|
+ECHO                                 ^|                                    ^|
+ECHO                                 ^|                                    ^|
+ECHO                                 ^|                                    ^|
+ECHO                                 ^|                                    ^|
+ECHO                                 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
+
+choice /n /c 1234567890 /m "Tavo pasirinkimas : "
+if errorlevel 10 (
+	EXIT
+)
+if errorlevel 1 (
+	CLS
+	GOTO :Download_Linux_Ubuntu_distribution_using_curl_utility
+)
+
+
+
+
+
+
+
+
+
+
 REM CURL utility was introduced in Windows 10 April 2018 Update RS4
 :Download_Linux_Ubuntu_distribution_using_curl_utility
 @ECHO OFF
