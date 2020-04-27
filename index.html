@@ -3,10 +3,9 @@
 
 echo "%~n0%~x0"|find "ready_for_execution_" >nul
 if errorlevel 1 (
-
-
-	TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%~DP0ready_for_execution_%~n0%~x0"
-	CALL "%~DP0ready_for_execution_%~n0%~x0"
+	MKDIR "%TEMP%\vaidoWorld\"
+	TYPE "%~DP0%~n0%~x0" | FIND "" /V > "%TEMP%\vaidoWorld\ready_for_execution_%~n0%~x0"
+	CALL "%TEMP%\vaidoWorld\ready_for_execution_%~n0%~x0"
 	EXIT
 
 )
@@ -74,7 +73,7 @@ ECHO                                 ^|                                    ^|
 ECHO                                 ^|                                    ^|
 ECHO                                 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 
-Pasirinkite nuspaudus skaičių klaviatūroje .
+ECHO Pasirinkite nuspaudus skaičių klaviatūroje .
 choice /n /c 1234567890 /m "Tavo pasirinkimas : "
 if errorlevel 10 (
 	EXIT
@@ -119,6 +118,9 @@ echo.
 
 @ECHO OFF
 SETLOCAL EnableDelayedExpansion
+
+FOR /F "tokens=2*" %%A IN ('REG QUERY "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop^|FIND/I "desktop"') DO SET "Desktop=!Desktop!%%B"
+CALL SET "Desktop=!Desktop!"
 
 ECHO Gathering local Date information
 REM Get current Year and Month for Windows 10 Windows 8.1 Windows 8 Windows 7
@@ -221,16 +223,19 @@ IF EXIST !ubuntu_desktop_filename! (
 		ECHO   Filename: !ubuntu_desktop_filename!
 		ECHO   Download URL: "%URL%/!ubuntu_desktop_filename!"
 		del "!ubuntu_desktop_filename!"
-		curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
+		curl "%URL%/!ubuntu_desktop_filename!" > "%Desktop%\!ubuntu_desktop_filename!"
 	)
 
 
 ) ELSE (
 	ECHO Downloading Linux/GNU/Ubuntu .iso installation disk file
 	ECHO   Filename: !ubuntu_desktop_filename!
-	del "!ubuntu_desktop_filename!"
-	curl "%URL%/!ubuntu_desktop_filename!" > "!ubuntu_desktop_filename!"
-
+	DEL "%Desktop%\!ubuntu_desktop_filename!"
+	echo !Desktop!\!ubuntu_desktop_filename!
+	echo %URL%/!ubuntu_desktop_filename!
+	@echo on
+	curl "%URL%/!ubuntu_desktop_filename!" > "!Desktop!\!ubuntu_desktop_filename!"
+	pause
 )
 
 
@@ -249,7 +254,7 @@ IF EXIST "rufus.exe" del "rufus.exe"
 ren "%rufus_filename%" "rufus.exe"
 
 ECHO Launching Rufus and autoselecting downloaded .iso file
-rufus.exe --iso="!ubuntu_desktop_filename!"
+rufus.exe --iso="%Desktop%\!ubuntu_desktop_filename!"
 
 
 
