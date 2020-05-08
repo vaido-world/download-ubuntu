@@ -191,12 +191,12 @@ FOR /F "tokens=2 delims=^*" %%A IN ('curl -s %URL%/MD5SUMS') DO (
 
 
 
-IF EXIST !ubuntu_desktop_filename! (
+IF EXIST "%Desktop%\!ubuntu_desktop_filename!" (
 	ECHO Checking MD5 integrity of already existing file
 
 	SETLOCAL ENABLEDELAYEDEXPANSION
 	set /a count=1 
-	for /f "skip=1 delims=:" %%a in ('CertUtil -hashfile "!ubuntu_desktop_filename!" MD5') do (
+	for /f "skip=1 delims=:" %%a in ('CertUtil -hashfile "%Desktop%\!ubuntu_desktop_filename!" MD5') do (
 	  if !count! equ 1 set "md5=%%a"
 	  set/a count+=1
 	)
@@ -236,7 +236,6 @@ IF EXIST !ubuntu_desktop_filename! (
 	DEL "%Desktop%\!ubuntu_desktop_filename!"
 	@echo on
 	curl "%URL%/!ubuntu_desktop_filename!" > "!Desktop!\!ubuntu_desktop_filename!"
-	pause
 )
 
 
@@ -255,7 +254,7 @@ IF EXIST "rufus.exe" del "rufus.exe"
 ren "%rufus_filename%" "rufus.exe"
 
 ECHO Launching Rufus and autoselecting downloaded .iso file
-rufus.exe --iso="%Desktop%\!ubuntu_desktop_filename!"
+rufus.exe --iso="%Desktop%/!ubuntu_desktop_filename!"
 
 
 
