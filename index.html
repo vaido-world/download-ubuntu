@@ -223,7 +223,7 @@ IF EXIST "%Desktop%\!ubuntu_desktop_filename!" (
 		ECHO   Filename: !ubuntu_desktop_filename!
 		ECHO   Download URL: "%URL%/!ubuntu_desktop_filename!"
 		ECHO   Downloading to: %Desktop%\!ubuntu_desktop_filename!
-		del "!ubuntu_desktop_filename!"
+		DEL "%Desktop%\!ubuntu_desktop_filename!"
 		curl --continue-at "-" "%URL%/!ubuntu_desktop_filename!" > "%Desktop%\!ubuntu_desktop_filename!"
 	)
 
