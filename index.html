@@ -187,27 +187,42 @@ ECHO    Gathering .iso Filename from remote source
 SETLOCAL ENABLEDELAYEDEXPANSION
 FOR /F "tokens=2 delims=^*" %%A IN ('curl -s %URL%/MD5SUMS') DO (
 	echo %%A | findstr /i /c:"desktop-amd64" >nul && SET "ubuntu_desktop_filename=%%A"
+	SET "hash=MD5"
 )
 
-
+ECHO FOUND HERE "%Desktop%\!ubuntu_desktop_filename!"
+IF "!ubuntu_desktop_filename!"=="" (
+	SETLOCAL ENABLEDELAYEDEXPANSION
+	FOR /F "tokens=2 delims=^*" %%A IN ('curl -s %URL%/SHA256SUMS') DO (
+	echo %%A | findstr /i /c:"desktop-amd64" >nul && SET "ubuntu_desktop_filename=%%A"
+	SET "hash=SHA256"
+)
+IF "!ubuntu_desktop_filename!"=="" (
+	ECHO These files have not been found online: 
+	ECHO %URL%/MD5SUMS 
+	ECHO %URL%/SHA256SUMS 
+	ECHO Ubuntu probably deprecated them, or Ubuntu website Internet Address has changed.
+	PAUSE
+	EXIT
+)
 
 IF EXIST "%Desktop%\!ubuntu_desktop_filename!" (
-	ECHO Checking MD5 integrity of already existing file
+	ECHO Checking !hash! integrity of already existing file
 
 	SETLOCAL ENABLEDELAYEDEXPANSION
 	set /a count=1 
-	for /f "skip=1 delims=:" %%a in ('CertUtil -hashfile "%Desktop%\!ubuntu_desktop_filename!" MD5') do (
-	  if !count! equ 1 set "md5=%%a"
+	for /f "skip=1 delims=:" %%a in ('CertUtil -hashfile "%Desktop%\!ubuntu_desktop_filename!" !hash!') do (
+	  if !count! equ 1 set "hashChecksum=%%a"
 	  set/a count+=1
 	)
-	SET md5file=!md5!
-	echo   File:  !md5file! 
+	SET hashfile=!hashChecksum!
+	echo   File:  !hashfile! 
 
 
-	ECHO   Downloading MD5 integrity from Online Site
+	ECHO   Downloading !hash! integrity file from Online Site
 
 	SETLOCAL ENABLEDELAYEDEXPANSION
-	FOR /F "tokens=1 delims=^*" %%A IN ('curl -s wget %URL%/MD5SUMS ^| findstr /i /c^:^"desktop^"') DO (
+	FOR /F "tokens=1 delims=^*" %%A IN ('curl -s wget %URL%/!hash!SUMS ^| findstr /i /c^:^"desktop^"') DO (
 		set "md5online=%%A"
 		set "md5online=!md5online:~%~1,-1%!"
 
@@ -215,11 +230,12 @@ IF EXIST "%Desktop%\!ubuntu_desktop_filename!" (
 	)
 	echo   Online: !md5online!
 
-	if "!md5online!" == "!md5file!" (
-		echo No need to download, the MD5 matched - local image file will be used for Rufus
+	if "!md5online!" == "!hashfile!" (
+		echo No need to download, the Hash !hash! checksum matched - local image file will be used for Rufus
 
 	) ELSE (
-		echo Ubuntu Image didn't match with Online MD5, downloading new one
+		echo Ubuntu Image didn't match with Online Hash Checksum, downloading new .iso file
+		PAUSE
 		ECHO   Filename: !ubuntu_desktop_filename!
 		ECHO   Download URL: "%URL%/!ubuntu_desktop_filename!"
 		ECHO   Downloading to: %Desktop%\!ubuntu_desktop_filename!
