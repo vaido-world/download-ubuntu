@@ -269,7 +269,7 @@ IF EXIST "rufus.exe" del "rufus.exe"
 ren "%rufus_filename%" "rufus.exe"
 
 ECHO Launching Rufus and autoselecting downloaded .iso file
-rufus.exe --iso="%Desktop%/!ubuntu_desktop_filename!"
+rufus.exe --gui --iso="%Desktop%/!ubuntu_desktop_filename!"
 
 
 
