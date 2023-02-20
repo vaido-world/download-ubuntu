@@ -301,7 +301,7 @@ ECHO format FS=fat32 label=LINUXUSB quick >> "%TEMP%/diskpartlinuxformat.txt"
 
 DISKPART /S "%TEMP%/diskpartlinuxformat.txt"
 
-TITLE Writing to USB (Wait until it's done)
+TITLE Writing to USB (This will take 2-4 minutes)
 tar xfv "%Desktop%/!ubuntu_desktop_filename!" -C "%DRIVE%/"
 TITLE Linux got installed on your USB DRIVE!
 ECHO EVERYTHING IS DONE!
