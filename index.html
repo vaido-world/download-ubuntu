@@ -294,12 +294,13 @@ IF "%DRIVE%"=="" TIMEOUT /T 2 && CLS && GOTO :wait_for_usb
 TITLE Formatting USB
 
 ECHO select volume %DRIVE% > "%TEMP%/diskpartlinuxformat.txt"
-ECHO clean >> "%TEMP%/diskpartlinuxformat.txt" 
-ECHO create partition primary >> "%TEMP%/diskpartlinuxformat.txt" 
-ECHO select partition 1 >> "%TEMP%/diskpartlinuxformat.txt" 
+REM ECHO clean >> "%TEMP%/diskpartlinuxformat.txt" 
+REM ECHO create partition primary >> "%TEMP%/diskpartlinuxformat.txt" 
+REM ECHO select partition 1 >> "%TEMP%/diskpartlinuxformat.txt" 
 ECHO format FS=fat32 label=LINUXUSB quick >> "%TEMP%/diskpartlinuxformat.txt" 
 
 DISKPART /S "%TEMP%/diskpartlinuxformat.txt"
+TIMEOUT /T 2
 
 TITLE Writing to USB (This will take 4-12 minutes)
 tar xfv "%Desktop%/!ubuntu_desktop_filename!" -C "%DRIVE%/"
