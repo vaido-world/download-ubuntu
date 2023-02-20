@@ -290,8 +290,10 @@ FOR /f %%D IN ('wmic LogicalDisk get Caption^, VolumeName ^| find "LINUXUSB"') D
 IF "%DRIVE%"=="" TIMEOUT /T 2 && CLS && GOTO :wait_for_usb
 
 CLS
-ECHO Detected, WAITING FOR DEVICE
-TIMEOUT /T 3
+ECHO WAITING FOR DEVICE
+TIMEOUT /T 4
+REM start /min "" "explorer.exe" "%DRIVE%\"
+
 TITLE Formatting USB
 
 ECHO select volume %DRIVE% > "%TEMP%/diskpartlinuxformat.txt"
