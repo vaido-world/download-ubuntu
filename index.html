@@ -289,8 +289,9 @@ TITLE Waiting for USB
 FOR /f %%D IN ('wmic LogicalDisk get Caption^, VolumeName ^| find "LINUXUSB"') DO SET "DRIVE=%%D"
 IF "%DRIVE%"=="" TIMEOUT /T 2 && CLS && GOTO :wait_for_usb
 
-
-
+CLS
+ECHO Detected, WAITING FOR DEVICE
+TIMEOUT /T 3
 TITLE Formatting USB
 
 ECHO select volume %DRIVE% > "%TEMP%/diskpartlinuxformat.txt"
@@ -300,7 +301,7 @@ REM ECHO select partition 1 >> "%TEMP%/diskpartlinuxformat.txt"
 ECHO format FS=fat32 label=LINUXUSB quick >> "%TEMP%/diskpartlinuxformat.txt" 
 
 DISKPART /S "%TEMP%/diskpartlinuxformat.txt"
-TIMEOUT /T 2
+
 
 TITLE Writing to USB (This will take 4-12 minutes)
 tar xfv "%Desktop%/!ubuntu_desktop_filename!" -C "%DRIVE%/"
