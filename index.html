@@ -304,8 +304,11 @@ DISKPART /S "%TEMP%/diskpartlinuxformat.txt"
 
 
 TITLE Writing to USB (This will take 4-12 minutes)
+color 03
 tar xfv "%Desktop%/!ubuntu_desktop_filename!" -C "%DRIVE%/"
 TITLE Linux got installed on your USB DRIVE!
+FOR /L %%i IN (1,1,10) do ECHO.
+color 0a
 ECHO EVERYTHING IS DONE!
 pause
 
