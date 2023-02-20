@@ -53,7 +53,7 @@ if '%errorlevel%' NEQ '0' (
 
 
 
-@ECHO OFF && SETLOCAL EnableDelayedExpansion
+@ECHO OFF
 chcp 65001 > nul
 echo.
 echo.
@@ -81,13 +81,13 @@ if errorlevel 10 (
 )
 if errorlevel 1 (
 	CLS
-	GOTO :Download_Linux_Ubuntu_distribution_using_curl_utility
 	SET "automated=0"
+	GOTO :Download_Linux_Ubuntu_distribution_using_curl_utility
 )
 if errorlevel 2 (
 	CLS
-	GOTO :Download_Linux_Ubuntu_distribution_using_curl_utility
 	SET "automated=1"
+	GOTO :Download_Linux_Ubuntu_distribution_using_curl_utility
 )
 
 
@@ -259,9 +259,7 @@ IF EXIST "%Desktop%\!ubuntu_desktop_filename!" (
 	curl --continue-at "-" "%URL%/!ubuntu_desktop_filename!" > "!Desktop!\!ubuntu_desktop_filename!"
 )
 
-ECHO %!automated!%
-ECHO !automated!
-pause
+
 if "!automated!"=="0" GOTO :automated
 
 
