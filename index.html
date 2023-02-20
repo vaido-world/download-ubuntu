@@ -259,8 +259,9 @@ IF EXIST "%Desktop%\!ubuntu_desktop_filename!" (
 	curl --continue-at "-" "%URL%/!ubuntu_desktop_filename!" > "!Desktop!\!ubuntu_desktop_filename!"
 )
 
-
-
+ECHO %!automated!%
+ECHO !automated!
+pause
 if "!automated!"=="0" GOTO :automated
 
 
