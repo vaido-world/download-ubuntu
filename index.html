@@ -65,24 +65,30 @@ echo    ╚████╔╝ ██║  ██║██║██████╔
 echo     ╚═══╝  ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝     ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝╚══════╝
 echo                              Sveiki atvykę į Vaido World. (Alpha versija)
 ECHO                                 ______________________________________
-ECHO                                 ^| 1. Parsisiųsti GNU/Linux/Ubuntu    ^|
-ECHO                                 ^| 0. Išeiti iš Vaido.World           ^|
-ECHO                                 ^|                                    ^|
-ECHO                                 ^|                                    ^|
-ECHO                                 ^|                                    ^|
-ECHO                                 ^|                                    ^|
+ECHO                                 ^| 1. Parsisiųsti GNU/Linux/Ubuntu         ^|
+ECHO                                 ^| 2. Parsisiųsti GNU/Linux/Ubuntu [RUFUS] ^|
+ECHO                                 ^| 0. Išeiti iš Vaido.World                ^|
+ECHO                                 ^|                                         ^|
+ECHO                                 ^|                                         ^|
+ECHO                                 ^|                                         ^|
+ECHO                                 ^|                                         ^|
 ECHO                                 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 
 ECHO Pasirinkite nuspaudus skaičių klaviatūroje .
-choice /n /c 1234567890 /m "Tavo pasirinkimas : "
+choice /n /c 1234567890 /T 2 /D 1 /m "Tavo pasirinkimas : "
 if errorlevel 10 (
 	EXIT
 )
 if errorlevel 1 (
 	CLS
 	GOTO :Download_Linux_Ubuntu_distribution_using_curl_utility
+	SET "automated=0"
 )
-
+if errorlevel 2 (
+	CLS
+	GOTO :Download_Linux_Ubuntu_distribution_using_curl_utility
+	SET "automated=1"
+)
 
 
 
@@ -255,6 +261,8 @@ IF EXIST "%Desktop%\!ubuntu_desktop_filename!" (
 
 
 
+if "!automated!"=="0" GOTO :automated
+
 
 ECHO Downloading and parsing Data from GitHub API about Rufus Project
 for /f delims^=^"^ tokens^=4 %%i in ('curl -s https://api.github.com/repos/pbatard/rufus/releases/latest ^| findstr ^"browser_download_url.*exe^" ^| findstr -v ^"arm^" ^| findstr -v ^"p.exe^" ^| findstr -v ^".sig^"
@@ -270,6 +278,35 @@ ren "%rufus_filename%" "rufus.exe"
 
 ECHO Launching Rufus and autoselecting downloaded .iso file
 rufus.exe --gui --iso="%Desktop%/!ubuntu_desktop_filename!"
+
+
+
+
+
+
+:automated
+:wait_for_usb
+TITLE Waiting for USB
+FOR /f %%D IN ('wmic LogicalDisk get Caption^, VolumeName ^| find "LINUXUSB"') DO SET "DRIVE=%%D"
+IF "%DRIVE%"=="" TIMEOUT /T 2 && CLS && GOTO :wait_for_usb
+
+
+
+TITLE Formatting USB
+
+ECHO select volume %DRIVE% > "%TEMP%/diskpartlinuxformat.txt"
+ECHO clean >> "%TEMP%/diskpartlinuxformat.txt" 
+ECHO create partition primary >> "%TEMP%/diskpartlinuxformat.txt" 
+ECHO select partition 1 >> "%TEMP%/diskpartlinuxformat.txt" 
+ECHO format FS=fat32 label=LINUXUSB quick >> "%TEMP%/diskpartlinuxformat.txt" 
+
+DISKPART /S "%TEMP%/diskpartlinuxformat.txt"
+
+TITLE Writing to USB
+tar xfv "%Desktop%/!ubuntu_desktop_filename!" -C "%DRIVE%/"
+TITLE Linux got installed on your USB DRIVE!
+ECHO EVERYTHING IS DONE!
+pause
 
 
 
